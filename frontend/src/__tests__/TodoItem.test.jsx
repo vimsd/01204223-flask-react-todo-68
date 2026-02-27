@@ -66,63 +66,43 @@ describe('TodoItem', () => {
     expect(onToggleDone).toHaveBeenCalledWith(baseTodo.id);
   });
 
+
   it('makes callback to deleteTodo when delete button is clicked', () => {
-	  const onDeleteTodo = vi.fn();
+    const deleteTodoSpy = vi.fn();
 
-	  render(
-	    <TodoItem
-	      todo={baseTodo}
-	      deleteTodo={onDeleteTodo}/>
-	  );
+    render(
+      <TodoItem 
+        todo={baseTodo} 
+        deleteTodo={deleteTodoSpy} 
+      />
+    );
 
-	  const button = screen.getByRole('button', { name: '❌' });
-	  button.click();
-	  expect(onDeleteTodo).toHaveBeenCalledWith(baseTodo.id);
-    //
-    // *** TODO: เขียนเอง
-    //
+    const deleteButton = screen.getByText('❌');
+    fireEvent.click(deleteButton);
+
+    expect(deleteTodoSpy).toHaveBeenCalledWith(baseTodo.id);
   });
 
   it('makes callback to addNewComment when a new comment is added', async () => {
     const onAddNewComment = vi.fn();
+
     render(
-    	<TodoItem
-      		todo={baseTodo}
-      		addNewComment={onAddNewComment}
-    	/>
+      <TodoItem 
+        todo={baseTodo} 
+        addNewComment={onAddNewComment} 
+      />
     );
 
     // พิมพ์ข้อความลงใน textbox
     const input = screen.getByRole('textbox');
     await userEvent.type(input, 'New comment');
 
-    // กดปุ่ม: ในที่นี้เราใช้ fireEvent เพราะว่าระหว่างการอัพเดทจะมีการเปลี่ยน state ถ้าไม่ใช่จะมี warning
+    // กดปุ่ม
     const button = screen.getByRole('button', { name: /add comment/i });
     fireEvent.click(button);
 
     // assert
     expect(onAddNewComment).toHaveBeenCalledWith(baseTodo.id, 'New comment');
-  });
-
-  it('toggles done on a todo item', async () => {
-    const onToggleDone = vi.fn();
-
-    render(
-      <TodoItem
-        todo={baseTodo}
-        toggleDone={onToggleDone}
-      />
-    );
-
-    // ก่อน toggle ยังไม่เป็น done
-    const todoText = screen.getByText('Sample Todo');
-    expect(todoText).not.toHaveClass('done');
-
-    // กดปุ่ม Toggle
-    const toggleButton = screen.getByRole('button', { name: /toggle/i });
-    await userEvent.click(toggleButton);
-
-    expect(onToggleDone).toHaveBeenCalledWith(baseTodo.id);
   });
 
 });
