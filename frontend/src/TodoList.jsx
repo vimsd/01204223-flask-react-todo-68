@@ -17,16 +17,19 @@ function TodoList({apiUrl}) {
   }, [username]);
 
   async function fetchTodoList() {
-    try {
-      const response = await fetch(TODOLIST_API_URL, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
-      });
-    } catch (err) {
-      //alert("Failed to fetch todo list from backend. Make sure the backend is running.");
-      setTodoList([]); 
-    }
+	try {
+	    const response = await fetch(TODOLIST_API_URL, {
+	      headers: {
+		'Authorization': `Bearer ${accessToken}`
+	      }
+	    });
+	    if (response.ok) {              
+	      const data = await response.json();  
+	      setTodoList(data);             
+	    }
+	} catch (err) {
+	    setTodoList([]);
+	}
   }
 
   async function toggleDone(id) {
